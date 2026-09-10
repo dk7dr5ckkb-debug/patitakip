@@ -1,0 +1,10 @@
+{
+  "name": "PatiTakip",
+  "short_name": "PatiTakip",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f5ef",
+  "theme_color": "#2f9f78",
+  "lang": "tr",
+  "icons": []
+}
