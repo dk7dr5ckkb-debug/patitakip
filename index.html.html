@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#eef7f2">
+<title>PatiTakip</title>
+<style>
+:root{--bg:#f7f6f1;--card:#fff;--ink:#29463e;--muted:#78908a;--accent:#4fa27d;--soft:#e5f2eb;--blue:#4b88df;--line:#e5e9e5;--danger:#c95b5b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}
+.app{max-width:820px;margin:auto;min-height:100vh;padding-bottom:90px}.top{padding:24px 20px 10px;display:flex;justify-content:space-between;align-items:center}.brand{font-size:32px;font-weight:800}.subtitle{color:var(--muted);font-size:17px;margin-top:4px}.bell{background:var(--soft);border-radius:22px;padding:13px 18px;font-weight:700;color:#39775e}
+main{padding:10px 16px}.hero{background:linear-gradient(135deg,#e5f5ee,#fffaf0);border-radius:28px;padding:24px;margin-bottom:14px}.hero h2{margin:0 0 8px;font-size:24px}.hero p{margin:0;color:var(--muted)}
+.pet{background:var(--card);border-radius:26px;padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:14px;box-shadow:0 3px 16px #00000006}.petpic{font-size:58px}.petname{font-size:27px;font-weight:800}.small{color:var(--muted)}.pill{margin-left:auto;background:var(--soft);padding:12px 20px;border-radius:20px;color:#39775e;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stat{background:var(--card);border-radius:26px;padding:20px}.stat .label{font-size:18px;color:var(--muted)}.num{font-size:40px;font-weight:800;margin:8px 0}.bar{height:10px;background:#dfe9e4;border-radius:20px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--accent);border-radius:20px}
+.section{margin-top:22px}.sectionhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.section h2{font-size:25px;margin:0}.add{background:var(--soft);color:#39775e;border-radius:20px;padding:13px 18px;font-weight:800}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}.action{background:var(--card);border-radius:26px;padding:25px 12px;text-align:center}.action b{display:block;color:var(--blue);font-size:20px;margin-top:7px}.action span{color:var(--muted);font-weight:600}
+.card{background:var(--card);border-radius:24px;padding:18px;margin-bottom:12px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.listitem{padding:13px 0;border-bottom:1px solid var(--line)}.listitem:last-child{border-bottom:0}.tag{padding:6px 10px;background:var(--soft);border-radius:12px;font-size:13px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fffffff0;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:5}nav button{background:none;color:#71817c;padding:13px 3px 11px;flex:1;max-width:150px;font-weight:700;font-size:13px}nav button.active{color:var(--accent)}nav .ico{font-size:24px;display:block;margin-bottom:3px}
+.view{display:none}.view.active{display:block}.back{background:none;color:var(--accent);font-weight:800;padding:4px 0 15px}.title{font-size:30px;font-weight:800;margin:0 0 15px}
+.modal{position:fixed;inset:0;background:#0005;display:none;align-items:flex-end;z-index:20}.modal.show{display:flex}.sheet{background:var(--bg);width:100%;max-width:820px;margin:auto;border-radius:28px 28px 0 0;padding:22px;max-height:88vh;overflow:auto}.sheet h2{margin-top:0}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-weight:700;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:14px;border:1px solid var(--line);border-radius:15px;background:#fff}.primary{width:100%;padding:15px;background:var(--accent);color:white;border-radius:16px;font-weight:800;margin-top:8px}.secondary{width:100%;padding:14px;background:#e8ece9;color:var(--ink);border-radius:16px;font-weight:700;margin-top:8px}
+canvas{width:100%;height:190px;background:#fff;border-radius:20px}
+.danger{color:var(--danger)}.empty{color:var(--muted);text-align:center;padding:22px}
+@media(min-width:700px){main{padding:18px 24px}.top{padding-left:24px;padding-right:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div><div class="brand">🐾 PatiTakip</div><div class="subtitle">Minik dostunun günlük takibi</div></div><button class="bell" onclick="showView('reminders')">🔔 <span id="bellCount">0</span></button></header>
+<main>
+<section id="home" class="view active">
+<div class="hero"><h2>Bugün nasılsınız? 🐾</h2><p>Mama, su, sağlık ve bakım kayıtlarını tek yerden takip et.</p></div>
+<div class="pet"><div class="petpic" id="petEmoji">🐶</div><div><div class="petname" id="petName">Luna</div><div class="small" id="petInfo">12.5 kg</div></div><button class="pill" onclick="openModal('profileModal')">Düzenle</button></div>
+<div class="grid">
+<div class="stat"><div class="label">🍗 Bugünkü mama</div><div class="num"><span id="foodTotal">0</span> g</div><div class="bar"><i id="foodBar" style="width:0%"></i></div><div class="small">Hedef: <span id="foodGoal">200</span> g</div></div>
+<div class="stat"><div class="label">💧 Bugünkü su</div><div class="num"><span id="waterTotal">0</span> ml</div><div class="bar"><i id="waterBar" style="width:0%"></i></div><div class="small">Hedef: <span id="waterGoal">600</span> ml</div></div>
+</div>
+<div class="section"><div class="sectionhead"><h2>Bugünkü kayıtlar</h2><button class="add" onclick="openFood()">+ Mama</button></div><div class="actions"><button class="action" onclick="openFood()">🍗<b>Mama ekle</b><span>gram kaydet</span></button><button class="action" onclick="addWater(100)">💧<b>100 ml su</b><span>hızlı kayıt</span></button></div></div>
+<div class="section">
+<div class="sectionhead"><h2>🐾 Tüm özellikler</h2></div>
+<div class="actions">
+<button class="action" onclick="showView('stats')">📊<b>İstatistikler</b><span>grafikleri gör</span></button>
+<button class="action" onclick="showView('health')">🩺<b>Sağlık</b><span>aşı & veteriner</span></button>
+<button class="action" onclick="showView('notes')">📝<b>Notlar & Anılar</b><span>ruh hali kaydet</span></button>
+<button class="action" onclick="showView('stock')">🥫<b>Mama Stoğu</b><span>stok takibi</span></button>
+<button class="action" onclick="showView('reminders')">🔔<b>Hatırlatıcılar</b><span>bakım planı</span></button>
+<button class="action" onclick="showView('profile')">🐾<b>Profil & Kilo</b><span>bilgileri düzenle</span></button>
+</div></div>
+<div class="section"><div class="sectionhead"><h2>Son aktiviteler</h2></div><div class="card" id="activityList"></div></div>
+</section>
+
+<section id="stats" class="view"><h1 class="title">📊 İstatistikler</h1><div class="card"><h3>Son 7 gün mama</h3><canvas id="foodChart" width="700" height="220"></canvas></div><div class="card"><h3>Son 7 gün su</h3><canvas id="waterChart" width="700" height="220"></canvas></div><div class="grid"><div class="stat"><div class="label">Ortalama mama</div><div class="num" id="avgFood">0 g</div></div><div class="stat"><div class="label">Ortalama su</div><div class="num" id="avgWater">0 ml</div></div></div></section>
+
+<section id="profile" class="view"><h1 class="title">🐾 Profil</h1><div class="card"><div class="pet"><div class="petpic" id="profileEmoji">🐶</div><div><div class="petname" id="profileName">Luna</div><div class="small" id="profileDetails">12.5 kg</div></div></div><button class="primary" onclick="openModal('profileModal')">Profili düzenle</button></div><div class="card"><h3>⚖️ Kilo takibi</h3><div id="weightList"></div><button class="add" onclick="openWeight()">+ Kilo kaydı</button></div><div class="card"><h3>🐾 Hayvanlarım</h3><div id="petsList"></div><button class="add" onclick="openPet()">+ Hayvan ekle</button></div></section>
+
+<section id="health" class="view"><h1 class="title">🩺 Sağlık</h1><div class="sectionhead"><span class="small">Aşı, veteriner, ilaç ve kontroller</span><button class="add" onclick="openHealth()">+ Kayıt</button></div><div id="healthList"></div></section>
+
+<section id="notes" class="view"><h1 class="title">📝 Notlar & Anılar</h1><div class="sectionhead"><span class="small">Fotoğraf notları ve ruh hali</span><button class="add" onclick="openNote()">+ Not</button></div><div id="notesList"></div></section>
+
+<section id="stock" class="view"><h1 class="title">🥫 Mama Stoğu</h1><div class="card"><h3>Mevcut mama</h3><div class="num"><span id="stockTotal">2</span> kg</div><div class="small">Azaldığında burada takip edebilirsin.</div><button class="primary" onclick="openModal('stockModal')">Stok güncelle</button></div></section>
+
+<section id="reminders" class="view"><h1 class="title">🔔 Bildirimler</h1><div class="sectionhead"><span class="small">Mama, su ve bakım hatırlatıcıları</span><button class="add" onclick="openReminder()">+ Hatırlatıcı</button></div><div id="reminderList"></div><div class="card"><b>Not:</b> Bu web sürümünde hatırlatıcılar uygulama içinde saklanır. Gerçek iPhone sistem bildirimleri için native uygulama gerekir.</div></section>
+</main>
+<nav><button class="active" data-view="home" onclick="showView('home')"><span class="ico">🏠</span>Ana Sayfa</button><button data-view="health" onclick="showView('health')"><span class="ico">🩺</span>Sağlık</button><button data-view="stats" onclick="showView('stats')"><span class="ico">📊</span>İstatistik</button><button data-view="profile" onclick="showView('profile')"><span class="ico">🐾</span>Profil</button><button data-view="reminders" onclick="showView('reminders')"><span class="ico">🔔</span>Bildirim</button></nav>
+</div>
+
+<div class="modal" id="foodModal"><div class="sheet"><h2>🍗 Mama kaydı</h2><div class="field"><label>Gram</label><input id="foodInput" type="number" min="1" placeholder="Örn. 50"></div><div class="field"><label>Öğün</label><select id="mealInput"><option>Kahvaltı</option><option>Öğle</option><option>Akşam</option><option>Ödül</option></select></div><button class="primary" onclick="saveFood()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="profileModal"><div class="sheet"><h2>🐾 Profil</h2><div class="field"><label>İsim</label><input id="nameInput"></div><div class="field"><label>Kilo (kg)</label><input id="weightInput" type="number" step=".1"></div><div class="field"><label>Günlük mama hedefi (g)</label><input id="foodGoalInput" type="number"></div><div class="field"><label>Günlük su hedefi (ml)</label><input id="waterGoalInput" type="number"></div><div class="field"><label>Tür</label><select id="emojiInput"><option value="🐶">🐶 Köpek</option><option value="🐱">🐱 Kedi</option><option value="🐰">🐰 Tavşan</option><option value="🐹">🐹 Hamster</option></select></div><button class="primary" onclick="saveProfile()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="weightModal"><div class="sheet"><h2>⚖️ Kilo kaydı</h2><div class="field"><label>Kilo (kg)</label><input id="newWeight" type="number" step=".1"></div><button class="primary" onclick="saveWeight()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="healthModal"><div class="sheet"><h2>🩺 Sağlık kaydı</h2><div class="field"><label>Tür</label><select id="healthType"><option>Veteriner</option><option>Aşı</option><option>İlaç</option><option>Kontrol</option></select></div><div class="field"><label>Başlık / açıklama</label><input id="healthText"></div><div class="field"><label>Tarih</label><input id="healthDate" type="date"></div><button class="primary" onclick="saveHealth()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="noteModal"><div class="sheet"><h2>📝 Not & Anı</h2><div class="field"><label>Ruh hali</label><select id="mood"><option>😊 Mutlu</option><option>😴 Uykulu</option><option>🥰 Sevgi dolu</option><option>😟 Huzursuz</option><option>😴 Halsiz</option></select></div><div class="field"><label>Not</label><textarea id="noteText" rows="4" placeholder="Bugün ne oldu?"></textarea></div><button class="primary" onclick="saveNote()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="reminderModal"><div class="sheet"><h2>🔔 Hatırlatıcı</h2><div class="field"><label>Başlık</label><input id="reminderText" placeholder="Akşam maması"></div><div class="field"><label>Saat</label><input id="reminderTime" type="time"></div><div class="field"><label>Tekrar</label><select id="reminderRepeat"><option>Her gün</option><option>Hafta içi</option><option>Hafta sonu</option></select></div><button class="primary" onclick="saveReminder()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="petModal"><div class="sheet"><h2>🐾 Hayvan ekle</h2><div class="field"><label>İsim</label><input id="petInput"></div><div class="field"><label>Tür</label><select id="petEmoji"><option>🐶</option><option>🐱</option><option>🐰</option><option>🐹</option><option>🐦</option></select></div><button class="primary" onclick="savePet()">Ekle</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<div class="modal" id="stockModal"><div class="sheet"><h2>🥫 Mama stoğu</h2><div class="field"><label>Mevcut stok (kg)</label><input id="stockInput" type="number" step=".1"></div><button class="primary" onclick="saveStock()">Kaydet</button><button class="secondary" onclick="closeModals()">Vazgeç</button></div></div>
+
+<script>
+const KEY="patitakip_v6";
+let d=JSON.parse(localStorage.getItem(KEY)||"null")||{profile:{name:"Luna",weight:12.5,foodGoal:200,waterGoal:600,emoji:"🐶"},food:[],water:[],weights:[],health:[],notes:[],reminders:[],pets:[],stock:2};
+function save(){localStorage.setItem(KEY,JSON.stringify(d));render()}
+function today(){return new Date().toISOString().slice(0,10)}
+function fmtDate(x){return new Date(x+"T12:00:00").toLocaleDateString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric"})}
+function showView(id){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===id));render();scrollTo(0,0)}
+function openModal(id){document.getElementById(id).classList.add("show")}
+function closeModals(){document.querySelectorAll(".modal").forEach(x=>x.classList.remove("show"))}
+function openFood(){document.getElementById("foodInput").value="";openModal("foodModal")}
+function saveFood(){let g=+foodInput.value;if(!g)return;d.food.push({date:today(),grams:g,meal:mealInput.value,time:new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})});closeModals();save()}
+function addWater(ml){d.water.push({date:today(),ml,time:new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}));save()}
+function saveProfile(){d.profile.name=nameInput.value||"Luna";d.profile.weight=+weightInput.value||12.5;d.profile.foodGoal=+foodGoalInput.value||200;d.profile.waterGoal=+waterGoalInput.value||600;d.profile.emoji=emojiInput.value;closeModals();save()}
+function openWeight(){newWeight.value=d.profile.weight;openModal("weightModal")}
+function saveWeight(){let w=+newWeight.value;if(!w)return;d.weights.push({date:today(),kg:w});d.profile.weight=w;closeModals();save()}
+function openHealth(){healthDate.value=today();healthText.value="";openModal("healthModal")}
+function saveHealth(){if(!healthText.value)return;d.health.push({date:healthDate.value||today(),type:healthType.value,text:healthText.value});closeModals();save()}
+function openNote(){noteText.value="";openModal("noteModal")}
+function saveNote(){if(!noteText.value)return;d.notes.push({date:today(),mood:mood.value,text:noteText.value});closeModals();save()}
+function openReminder(){reminderText.value="";reminderTime.value="";openModal("reminderModal")}
+function saveReminder(){if(!reminderText.value)return;d.reminders.push({text:reminderText.value,time:reminderTime.value||"--:--",repeat:reminderRepeat.value});closeModals();save()}
+function openPet(){petInput.value="";openModal("petModal")}
+function savePet(){if(!petInput.value)return;d.pets.push({name:petInput.value,emoji:petEmoji.value});closeModals();save()}
+function saveStock(){d.stock=+stockInput.value||0;closeModals();save()}
+function del(arr,i){arr.splice(i,1);save()}
+function totals(){let f=d.food.filter(x=>x.date===today()).reduce((a,x)=>a+x.grams,0),w=d.water.filter(x=>x.date===today()).reduce((a,x)=>a+x.ml,0);return[f,w]}
+function render(){
+let p=d.profile,[f,w]=totals();petName.textContent=p.name;petInfo.textContent=p.weight+" kg";petEmoji.textContent=p.emoji;profileEmoji.textContent=p.emoji;profileName.textContent=p.name;profileDetails.textContent=p.weight+" kg • Mama hedefi "+p.foodGoal+" g • Su hedefi "+p.waterGoal+" ml";
+foodTotal.textContent=f;waterTotal.textContent=w;foodGoal.textContent=p.foodGoal;waterGoal.textContent=p.waterGoal;foodBar.style.width=Math.min(100,f/p.foodGoal*100)+"%";waterBar.style.width=Math.min(100,w/p.waterGoal*100)+"%";bellCount.textContent=d.reminders.length;stockTotal.textContent=d.stock;
+let acts=[...d.food.filter(x=>x.date===today()).map(x=>({t:"🍗 "+x.meal+" maması",v:x.grams+" g",time:x.time})),...d.water.filter(x=>x.date===today()).map(x=>({t:"💧 Su",v:x.ml+" ml",time:x.time}))].reverse();
+activityList.innerHTML=acts.length?acts.map(x=>`<div class="listitem row"><span>${x.t}<br><span class="small">${x.time}</span></span><b>${x.v}</b></div>`).join(""):'<div class="empty">Bugün henüz kayıt yok.</div>';
+weightList.innerHTML=d.weights.length?[...d.weights].reverse().slice(0,8).map((x,i)=>`<div class="listitem row"><span>${fmtDate(x.date)}</span><b>${x.kg} kg</b></div>`).join(""):'<div class="empty">Henüz kilo kaydı yok.</div>';
+petsList.innerHTML=d.pets.length?d.pets.map((x,i)=>`<div class="listitem row"><span>${x.emoji} ${x.name}</span><button class="danger" onclick="del(d.pets,${i})">Sil</button></div>`).join(""):'<div class="empty">Luna dışında hayvan eklenmedi.</div>';
+healthList.innerHTML=d.health.length?[...d.health].reverse().map((x,i)=>`<div class="card"><div class="row"><b>${x.type}</b><span class="tag">${fmtDate(x.date)}</span></div><p>${x.text}</p></div>`).join(""):'<div class="card empty">Henüz sağlık kaydı yok.</div>';
+notesList.innerHTML=d.notes.length?[...d.notes].reverse().map(x=>`<div class="card"><b>${x.mood}</b><div class="small">${fmtDate(x.date)}</div><p>${x.text}</p></div>`).join(""):'<div class="card empty">Henüz not yok.</div>';
+reminderList.innerHTML=d.reminders.length?d.reminders.map((x,i)=>`<div class="card row"><span>🔔 <b>${x.text}</b><br><span class="small">${x.time} • ${x.repeat}</span></span><button class="danger" onclick="del(d.reminders,${i})">Sil</button></div>`).join(""):'<div class="card empty">Henüz hatırlatıcı eklenmedi.</div>';
+avgFood.textContent=Math.round(last7("food","grams").reduce((a,b)=>a+b,0)/7)+" g";avgWater.textContent=Math.round(last7("water","ml").reduce((a,b)=>a+b,0)/7)+" ml";drawChart(foodChart,last7("food","grams"),"g");drawChart(waterChart,last7("water","ml"),"ml");
+}
+function last7(type,key){let out=[];for(let n=6;n>=0;n--){let dt=new Date();dt.setDate(dt.getDate()-n);let s=dt.toISOString().slice(0,10);out.push(d[type].filter(x=>x.date===s).reduce((a,x)=>a+x[key],0))}return out}
+function drawChart(c,vals,unit){let ctx=c.getContext("2d"),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);let max=Math.max(...vals,1),pad=35;ctx.font="16px -apple-system,Arial";ctx.strokeStyle="#dfe6e2";ctx.beginPath();ctx.moveTo(pad,10);ctx.lineTo(pad,h-30);ctx.lineTo(w-15,h-30);ctx.stroke();ctx.strokeStyle="#4fa27d";ctx.lineWidth=4;ctx.beginPath();vals.forEach((v,i)=>{let x=pad+i*(w-pad-25)/6,y=h-30-(v/max)*(h-55);i?ctx.lineTo(x,y):ctx.moveTo(x,y);ctx.fillText(String(v)+unit,x-10,y-10)});ctx.stroke();ctx.lineWidth=1}
+[nameInput,weightInput,foodGoalInput,waterGoalInput,emojiInput].forEach(()=>{});
+document.getElementById("profileModal").addEventListener("click",e=>{if(e.target.id==="profileModal")closeModals()});
+render();
+</script>
+</body></html>
